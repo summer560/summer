@@ -7,7 +7,7 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #f7f7f7;
+    background: #d2c4a5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,7 +25,7 @@
     width: 100%;
     height: auto;
     image-rendering: pixelated;
-    background: #f7f7f7;
+    background: #e8dcc8;
   }
   #startOverlay {
     position: absolute;
@@ -34,20 +34,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(247,247,247,0.85);
+    background: rgba(232,220,200,0.88);
     cursor: pointer;
     z-index: 10;
   }
   #startOverlay .title {
     font-size: 28px;
     font-weight: bold;
-    color: #535353;
+    color: #4a3728;
     margin-bottom: 8px;
     letter-spacing: 2px;
   }
   #startOverlay .sub {
     font-size: 14px;
-    color: #888;
+    color: #8a7560;
   }
   #startOverlay.hidden { display: none; }
 </style>
@@ -96,17 +96,18 @@
   // w = white, p = pupil, n = nose, c = cheek, t = tail, m = mouth
   const PAL = {
     '.': null,
-    'o': '#5a3e4a',  // dark outline
-    'b': '#ffb6c1',  // body pink
-    'B': '#ffc8d6',  // lighter pink (belly)
-    'e': '#ff8fa3',  // ear inner
-    'w': '#ffffff',  // white
-    'p': '#2d1b33',  // pupil
-    'n': '#e8a0af',  // nose (subtle pink, not red)
-    'c': '#ff9eb5',  // cheek blush
-    't': '#ffd1dc',  // tail
-    'x': '#2d1b33',  // X eye for dead (same black as pupil)
-    's': '#88ccff',  // sweat drop
+    'o': '#5c3a2e',  // warm dark brown outline
+    'b': '#f2c6a5',  // warm peach body
+    'B': '#f7dcc8',  // lighter peach (belly)
+    'e': '#e8956e',  // ear inner warm
+    'w': '#f5ead6',  // cream white
+    'p': '#3b2215',  // dark brown pupil
+    'n': '#d4a48a',  // nose (muted warm)
+    'c': '#e8a07a',  // warm cheek blush
+    't': '#f5d8c4',  // tail light
+    'x': '#3b2215',  // X eye (same brown as pupil)
+    's': '#7ab5c4',  // muted teal sweat drop
+    'm': '#5c3a2e',  // mouth (same as outline)
   };
 
   // 10 wide x 12 tall grid sprites
@@ -196,12 +197,12 @@
   // g = dark green, G = light green, O = dark orange, o = orange, h = highlight, T = tip
   const CARROT_PAL = {
     '.': null,
-    'g': '#2d9b1b',
-    'G': '#5cbf3a',
-    'O': '#e07010',
-    'o': '#f5871f',
-    'h': '#ffbc73',
-    'L': '#ff9a3c',
+    'g': '#5a7a3a',  // muted olive green
+    'G': '#8aaa55',  // lighter olive
+    'O': '#b85a20',  // deep burnt orange
+    'o': '#d47830',  // warm orange
+    'h': '#e8a860',  // warm highlight
+    'L': '#c46828',  // mid orange
   };
 
   const CARROT_SMALL = [
@@ -291,7 +292,7 @@
   }
 
   function drawCloud(c) {
-    ctx.fillStyle = '#e0e0e0';
+    ctx.fillStyle = '#d4c8b0';
     ctx.fillRect(c.x, c.y, c.w, PIXEL*2);
     ctx.fillRect(c.x + PIXEL*2, c.y - PIXEL, c.w - PIXEL*4, PIXEL);
     ctx.fillRect(c.x + PIXEL, c.y + PIXEL*2, c.w - PIXEL*2, PIXEL);
@@ -350,14 +351,14 @@
 
   // ── Score Display ──
   function drawScore() {
-    ctx.fillStyle = '#535353';
+    ctx.fillStyle = '#5c3a2e';
     ctx.font = 'bold 16px "Courier New", monospace';
     ctx.textAlign = 'right';
     const s = String(Math.floor(score)).padStart(5, '0');
     if (highScore > 0) {
-      ctx.fillStyle = '#999';
+      ctx.fillStyle = '#a08a70';
       ctx.fillText('HI ' + String(highScore).padStart(5, '0'), W - 20, 25);
-      ctx.fillStyle = '#535353';
+      ctx.fillStyle = '#5c3a2e';
       ctx.fillText(s, W - 120, 25);
     } else {
       ctx.fillText(s, W - 20, 25);
@@ -366,7 +367,7 @@
 
   // ── Game Over ──
   function drawGameOver() {
-    ctx.fillStyle = '#535353';
+    ctx.fillStyle = '#5c3a2e';
     ctx.font = 'bold 20px "Courier New", monospace';
     ctx.textAlign = 'center';
     ctx.fillText('GAME OVER', W/2, H/2 - 20);
@@ -442,20 +443,21 @@
   }
 
   function draw() {
-    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#e8dcc8';
+    ctx.fillRect(0, 0, W, H);
 
     // Clouds
     clouds.forEach(drawCloud);
 
     // Ground line
-    ctx.fillStyle = '#535353';
+    ctx.fillStyle = '#8a7560';
     ctx.fillRect(0, GROUND_Y + 4, W, 1);
 
     // Ground dots
     groundDots.forEach(d => {
       const dx = ((d.x - groundOffset) % (W * 2) + W * 2) % (W * 2) - W * 0.5;
       if (dx > -10 && dx < W + 10) {
-        ctx.fillStyle = '#ccc';
+        ctx.fillStyle = '#c4b49a';
         ctx.fillRect(dx, d.y, 2, 1);
       }
     });
