@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <title>Dot Rabbit Runner</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,7 +14,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-family: 'Courier New', monospace;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
     overflow: hidden;
   }
   #gameWrapper {
@@ -39,15 +41,18 @@
     z-index: 10;
   }
   #startOverlay .title {
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: normal;
     color: #7a6b8a;
-    margin-bottom: 8px;
-    letter-spacing: 2px;
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+    font-family: 'Press Start 2P', monospace;
   }
   #startOverlay .sub {
-    font-size: 14px;
+    font-size: 10px;
     color: #a89aba;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 2px;
   }
   #startOverlay.hidden { display: none; }
 </style>
@@ -352,14 +357,14 @@
   // ── Score Display ──
   function drawScore() {
     ctx.fillStyle = '#7a6b8a';
-    ctx.font = 'bold 16px "Courier New", monospace';
+    ctx.font = '12px "Press Start 2P", monospace';
     ctx.textAlign = 'right';
     const s = String(Math.floor(score)).padStart(5, '0');
     if (highScore > 0) {
       ctx.fillStyle = '#b8a8c8';
       ctx.fillText('HI ' + String(highScore).padStart(5, '0'), W - 20, 25);
       ctx.fillStyle = '#7a6b8a';
-      ctx.fillText(s, W - 120, 25);
+      ctx.fillText(s, W - 130, 25);
     } else {
       ctx.fillText(s, W - 20, 25);
     }
@@ -368,11 +373,11 @@
   // ── Game Over ──
   function drawGameOver() {
     ctx.fillStyle = '#7a6b8a';
-    ctx.font = 'bold 20px "Courier New", monospace';
+    ctx.font = '16px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
     ctx.fillText('GAME OVER', W/2, H/2 - 20);
-    ctx.font = '14px "Courier New", monospace';
-    ctx.fillText('Tap / Press Space to Restart', W/2, H/2 + 10);
+    ctx.font = '8px "Press Start 2P", monospace';
+    ctx.fillText('TAP / SPACE TO RESTART', W/2, H/2 + 15);
   }
 
   // ── Main Loop ──
