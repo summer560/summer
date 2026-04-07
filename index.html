@@ -85,121 +85,230 @@
   let frameCount = 0;
 
   // ── Rabbit ──
+  const P = PIXEL;
   const rabbit = {
-    x: 60, y: GROUND_Y, vy: 0, w: 28, h: 32,
+    x: 60, y: GROUND_Y, vy: 0, w: 36, h: 44,
     grounded: true, frame: 0, frameTimer: 0
   };
 
-  // Rabbit pixel sprites (run frame 1, run frame 2, jump, dead)
-  // Each sprite is an array of [x, y] pixel positions (in 4px grid)
-  const RABBIT_SPRITES = {
-    run1: [
-      // ears
-      [2,0],[4,0],
-      [2,1],[4,1],
-      // head
-      [1,2],[2,2],[3,2],[4,2],[5,2],
-      [1,3],[2,3],[3,3],[4,3],[5,3],
-      // eye
-      [4,2],
-      // body
-      [1,4],[2,4],[3,4],[4,4],[5,4],
-      [0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],
-      [1,6],[2,6],[3,6],[4,6],[5,6],
-      // tail
-      [0,5],
-      // legs (run pose 1)
-      [1,7],[2,7],[4,7],[5,7],
-    ],
-    run2: [
-      [2,0],[4,0],
-      [2,1],[4,1],
-      [1,2],[2,2],[3,2],[4,2],[5,2],
-      [1,3],[2,3],[3,3],[4,3],[5,3],
-      [4,2],
-      [1,4],[2,4],[3,4],[4,4],[5,4],
-      [0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],
-      [1,6],[2,6],[3,6],[4,6],[5,6],
-      [0,5],
-      // legs (run pose 2)
-      [2,7],[3,7],[5,7],
-      [1,8],
-    ],
-    jump: [
-      [2,0],[4,0],
-      [2,1],[4,1],
-      [1,2],[2,2],[3,2],[4,2],[5,2],
-      [1,3],[2,3],[3,3],[4,3],[5,3],
-      [4,2],
-      [1,4],[2,4],[3,4],[4,4],[5,4],
-      [0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],
-      [1,6],[2,6],[3,6],[4,6],[5,6],
-      [0,5],
-      // legs tucked
-      [2,7],[3,7],[4,7],[5,7],
-    ],
-    dead: [
-      [2,0],[4,0],
-      [2,1],[4,1],
-      [1,2],[2,2],[3,2],[4,2],[5,2],
-      [1,3],[2,3],[3,3],[4,3],[5,3],
-      // X eyes
-      [3,3],[5,3],
-      [1,4],[2,4],[3,4],[4,4],[5,4],
-      [0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],
-      [1,6],[2,6],[3,6],[4,6],[5,6],
-      [0,5],
-      [1,7],[2,7],[4,7],[5,7],
-    ]
+  // Multi-color sprite system: each entry is [x, y, colorKey]
+  // Colors: b=body(pink), o=outline(dark), e=ear_inner, w=white, p=pupil, n=nose, c=cheek, t=tail
+  const C = {
+    b: '#ffb6c1', // light pink body
+    o: '#6b4c5e', // dark outline
+    e: '#ff8fa3', // ear inner pink
+    w: '#ffffff', // white
+    p: '#2d1b33', // dark pupil
+    n: '#ff6b8a', // nose pink
+    c: '#ff9eb5', // cheek blush
+    t: '#ffd1dc', // tail light
   };
 
-  function drawRabbitSprite(sprite, x, y, color) {
-    ctx.fillStyle = color;
-    sprite.forEach(([px, py]) => {
-      ctx.fillRect(x + px * PIXEL, y + py * PIXEL, PIXEL, PIXEL);
-    });
+  function makeSprite(layers) {
+    // layers: array of { color, pixels: [[x,y],...] }
+    return layers;
   }
 
-  // Eye detail
-  function drawEye(x, y, dead) {
-    if (dead) {
-      // X eye
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(x + 3*PIXEL, y + 2*PIXEL, PIXEL, PIXEL);
-      ctx.fillRect(x + 5*PIXEL, y + 2*PIXEL, PIXEL, PIXEL);
-    } else {
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(x + 4*PIXEL, y + 2*PIXEL, PIXEL, PIXEL);
-      ctx.fillStyle = '#000';
-      ctx.fillRect(x + 4*PIXEL + 2, y + 2*PIXEL + 2, 2, 2);
-    }
+  const RABBIT_SPRITES = {
+    run1: makeSprite([
+      // Outline & structure
+      { color: 'o', pixels: [
+        // left ear outline
+        [2,0],[3,0],[2,1],[3,1],[2,2],[3,2],
+        // right ear outline
+        [5,0],[6,0],[5,1],[6,1],[5,2],[6,2],
+        // head outline
+        [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],
+        [1,4],[7,4],
+        [1,5],[7,5],
+        [1,6],[7,6],
+        // body outline
+        [0,7],[8,7],
+        [0,8],[8,8],
+        [0,9],[8,9],
+        // legs
+        [1,10],[2,10],[5,10],[6,10],
+      ]},
+      // Body fill
+      { color: 'b', pixels: [
+        [2,3],[3,3],[4,3],[5,3],[6,3],
+        [2,4],[3,4],[4,4],[5,4],[6,4],
+        [2,5],[3,5],[4,5],[5,5],[6,5],
+        [2,6],[3,6],[4,6],[5,6],[6,6],
+        [1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],
+        [1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],
+        [1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],
+      ]},
+      // Ear inner
+      { color: 'e', pixels: [[2,1],[3,1],[5,1],[6,1],[2,2],[5,2]] },
+      // Eyes
+      { color: 'w', pixels: [[3,4],[4,4],[5,4],[6,4]] },
+      { color: 'p', pixels: [[4,4],[6,4]] },
+      // Nose
+      { color: 'n', pixels: [[4,5],[5,5]] },
+      // Cheeks
+      { color: 'c', pixels: [[2,5],[7,5]] },
+      // Tail
+      { color: 't', pixels: [[-1,8],[0,7]] },
+    ]),
+    run2: makeSprite([
+      { color: 'o', pixels: [
+        [2,0],[3,0],[2,1],[3,1],[2,2],[3,2],
+        [5,0],[6,0],[5,1],[6,1],[5,2],[6,2],
+        [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],
+        [1,4],[7,4],
+        [1,5],[7,5],
+        [1,6],[7,6],
+        [0,7],[8,7],
+        [0,8],[8,8],
+        [0,9],[8,9],
+        // legs alt pose
+        [2,10],[3,10],[6,10],[7,10],
+        [1,11],
+      ]},
+      { color: 'b', pixels: [
+        [2,3],[3,3],[4,3],[5,3],[6,3],
+        [2,4],[3,4],[4,4],[5,4],[6,4],
+        [2,5],[3,5],[4,5],[5,5],[6,5],
+        [2,6],[3,6],[4,6],[5,6],[6,6],
+        [1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],
+        [1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],
+        [1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],
+      ]},
+      { color: 'e', pixels: [[2,1],[3,1],[5,1],[6,1],[2,2],[5,2]] },
+      { color: 'w', pixels: [[3,4],[4,4],[5,4],[6,4]] },
+      { color: 'p', pixels: [[4,4],[6,4]] },
+      { color: 'n', pixels: [[4,5],[5,5]] },
+      { color: 'c', pixels: [[2,5],[7,5]] },
+      { color: 't', pixels: [[-1,8],[0,7]] },
+    ]),
+    jump: makeSprite([
+      { color: 'o', pixels: [
+        // ears perked up higher
+        [2,-1],[3,-1],[2,0],[3,0],[2,1],[3,1],
+        [5,-1],[6,-1],[5,0],[6,0],[5,1],[6,1],
+        [1,2],[7,2],
+        [1,3],[7,3],
+        [1,4],[7,4],
+        [1,5],[7,5],
+        [0,6],[8,6],
+        [0,7],[8,7],
+        [0,8],[8,8],
+        // legs tucked
+        [2,9],[3,9],[5,9],[6,9],
+      ]},
+      { color: 'b', pixels: [
+        [2,2],[3,2],[4,2],[5,2],[6,2],
+        [2,3],[3,3],[4,3],[5,3],[6,3],
+        [2,4],[3,4],[4,4],[5,4],[6,4],
+        [2,5],[3,5],[4,5],[5,5],[6,5],
+        [1,6],[2,6],[3,6],[4,6],[5,6],[6,6],[7,6],
+        [1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],
+        [1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],
+      ]},
+      { color: 'e', pixels: [[2,0],[3,0],[5,0],[6,0],[2,1],[5,1]] },
+      { color: 'w', pixels: [[3,3],[4,3],[5,3],[6,3]] },
+      { color: 'p', pixels: [[4,3],[6,3]] },
+      { color: 'n', pixels: [[4,4],[5,4]] },
+      { color: 'c', pixels: [[2,4],[7,4]] },
+      { color: 't', pixels: [[-1,7],[0,6]] },
+    ]),
+    dead: makeSprite([
+      { color: 'o', pixels: [
+        [2,0],[3,0],[2,1],[3,1],[2,2],[3,2],
+        [5,0],[6,0],[5,1],[6,1],[5,2],[6,2],
+        [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],
+        [1,4],[7,4],
+        [1,5],[7,5],
+        [1,6],[7,6],
+        [0,7],[8,7],
+        [0,8],[8,8],
+        [0,9],[8,9],
+        [1,10],[2,10],[5,10],[6,10],
+      ]},
+      { color: 'b', pixels: [
+        [2,3],[3,3],[4,3],[5,3],[6,3],
+        [2,4],[3,4],[4,4],[5,4],[6,4],
+        [2,5],[3,5],[4,5],[5,5],[6,5],
+        [2,6],[3,6],[4,6],[5,6],[6,6],
+        [1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],
+        [1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],
+        [1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],
+      ]},
+      { color: 'e', pixels: [[2,1],[3,1],[5,1],[6,1],[2,2],[5,2]] },
+      // X eyes
+      { color: 'p', pixels: [[3,4],[5,4],[4,4],[6,4],[3,5],[5,5]] },
+      // Sweat drop
+      { color: 'w', pixels: [[8,3],[8,4]] },
+      { color: 'n', pixels: [[4,6],[5,6]] },
+      { color: 't', pixels: [[-1,8],[0,7]] },
+    ]),
+  };
+
+  function drawRabbitMultiColor(spriteData, x, y) {
+    spriteData.forEach(layer => {
+      ctx.fillStyle = C[layer.color];
+      layer.pixels.forEach(([px, py]) => {
+        ctx.fillRect(x + px * P, y + py * P, P, P);
+      });
+    });
   }
 
   // ── Obstacles ──
   let obstacles = [];
   const OBSTACLE_TYPES = [
-    // small cactus → carrot
-    { w: 16, h: 28, sprite: 'carrot_small' },
-    // tall cactus → carrot tall
-    { w: 16, h: 40, sprite: 'carrot_tall' },
-    // double
-    { w: 32, h: 28, sprite: 'carrot_double' },
+    { w: 20, h: 32, sprite: 'carrot_small' },
+    { w: 20, h: 44, sprite: 'carrot_tall' },
+    { w: 40, h: 32, sprite: 'carrot_double' },
   ];
 
   function drawCarrot(x, y, w, h) {
-    // Orange body
-    ctx.fillStyle = '#e87000';
-    const bx = x + 2, by = y + 8;
-    const bw = w - 4, bh = h - 8;
-    for (let row = 0; row < bh; row += PIXEL) {
-      const shrink = Math.floor(row / bh * 3) * PIXEL;
-      ctx.fillRect(bx + shrink, by + row, bw - shrink * 2, PIXEL);
+    const cx = x + w / 2;
+    const leafH = P * 3;
+    const bodyTop = y + leafH;
+    const bodyH = h - leafH;
+
+    // Leaves (3 leaves spreading out)
+    ctx.fillStyle = '#2d9b1b';
+    // center leaf
+    ctx.fillRect(cx - P/2, y, P, leafH + P);
+    // left leaf
+    ctx.fillRect(cx - P*2, y + P, P, leafH - P);
+    ctx.fillRect(cx - P*1.5, y, P, P);
+    // right leaf
+    ctx.fillRect(cx + P, y + P, P, leafH - P);
+    ctx.fillRect(cx + P*0.5, y, P, P);
+    // lighter green highlights
+    ctx.fillStyle = '#5cbf3a';
+    ctx.fillRect(cx - P/2, y, P, P);
+    ctx.fillRect(cx - P*2, y + P, P, P);
+    ctx.fillRect(cx + P, y + P, P, P);
+
+    // Carrot body - nice taper with rounded top
+    const rows = Math.floor(bodyH / P);
+    for (let i = 0; i < rows; i++) {
+      const t = i / (rows - 1);
+      const rowW = Math.max(P, w * (1 - t * 0.75));
+      const rx = cx - rowW / 2;
+
+      // Main orange
+      ctx.fillStyle = i % 3 === 0 ? '#f5871f' : '#ff9a3c';
+      ctx.fillRect(rx, bodyTop + i * P, rowW, P);
+
+      // Highlight stripe
+      if (i > 0 && i < rows - 1 && i % 4 === 1) {
+        ctx.fillStyle = '#ffbc73';
+        ctx.fillRect(rx + P, bodyTop + i * P, Math.max(P, rowW - P*2), P);
+      }
     }
-    // Green top
-    ctx.fillStyle = '#2a8c00';
-    ctx.fillRect(x + w/2 - PIXEL, y, PIXEL*2, PIXEL*3);
-    ctx.fillRect(x + w/2 - PIXEL*2, y, PIXEL, PIXEL*2);
-    ctx.fillRect(x + w/2 + PIXEL, y, PIXEL, PIXEL*2);
+
+    // Carrot tip
+    ctx.fillStyle = '#e07010';
+    ctx.fillRect(cx - P/2, bodyTop + (rows-1) * P, P, P);
+
+    // Top outline accent
+    ctx.fillStyle = '#d46a10';
+    ctx.fillRect(cx - w*0.45, bodyTop, w*0.9, P);
   }
 
   function spawnObstacle() {
@@ -409,8 +518,8 @@
     // Obstacles
     obstacles.forEach(o => {
       if (o.sprite === 'carrot_double') {
-        drawCarrot(o.x, o.y, 14, o.h);
-        drawCarrot(o.x + 16, o.y, 14, o.h);
+        drawCarrot(o.x, o.y, 18, o.h);
+        drawCarrot(o.x + 20, o.y, 18, o.h);
       } else {
         drawCarrot(o.x, o.y, o.w, o.h);
       }
@@ -418,16 +527,15 @@
 
     // Rabbit
     const spriteY = rabbit.y - rabbit.h;
-    let sprite;
+    let spriteData;
     if (state === 'dead') {
-      sprite = RABBIT_SPRITES.dead;
+      spriteData = RABBIT_SPRITES.dead;
     } else if (!rabbit.grounded) {
-      sprite = RABBIT_SPRITES.jump;
+      spriteData = RABBIT_SPRITES.jump;
     } else {
-      sprite = rabbit.frame === 0 ? RABBIT_SPRITES.run1 : RABBIT_SPRITES.run2;
+      spriteData = rabbit.frame === 0 ? RABBIT_SPRITES.run1 : RABBIT_SPRITES.run2;
     }
-    drawRabbitSprite(sprite, rabbit.x, spriteY, '#535353');
-    drawEye(rabbit.x, spriteY, state === 'dead');
+    drawRabbitMultiColor(spriteData, rabbit.x, spriteY);
 
     // Score
     drawScore();
