@@ -1,0 +1,49 @@
+/* ========== CSS 블럭에 넣을 코드 ========== */
+.userEL21372026 { position: relative; padding:20px 0px; --block-line-radius: 0px; }
+.userEL21372026 .container.full-width > .row[data-matrix-loop="true"][data-matrix-column="1"] > .item,
+.userEL21372026 .container.full-width > .row[data-matrix-loop="true"][data-matrix-column="1"][data-ipd] > .item {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#rabbitGameWrap {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+#rabbitGame {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 12px;
+}
+#rabbitOverlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(240,236,248,0.88);
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 12px;
+}
+#rabbitOverlay .rg-title {
+    font-size: 20px;
+    font-weight: normal;
+    color: #ffffff;
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+    font-family: 'Press Start 2P', monospace;
+    text-shadow: -2px 0 #b8a0cc, 2px 0 #b8a0cc, 0 -2px #b8a0cc, 0 2px #b8a0cc;
+}
+#rabbitOverlay .rg-sub {
+    font-size: 10px;
+    color: #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 2px;
+    text-shadow: -2px 0 #b8a0cc, 2px 0 #b8a0cc, 0 -2px #b8a0cc, 0 2px #b8a0cc;
+}
