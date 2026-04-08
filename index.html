@@ -95,87 +95,79 @@
   // ── Rabbit (grid-based pixel art) ──
   const P = PIXEL;
   const rabbit = {
-    x: 60, y: GROUND_Y, vy: 0, w: 40, h: 48,
+    x: 60, y: GROUND_Y, vy: 0, w: 48, h: 48,
     grounded: true, frame: 0, frameTimer: 0
   };
 
   // Grid sprite: each row is a string, each char maps to a color
   // . = transparent, o = outline, b = body pink, e = ear inner,
   // w = white, p = pupil, n = nose, c = cheek, t = tail, m = mouth
+  // All black silhouette, p = white eye
   const PAL = {
     '.': null,
-    'o': '#c8a850',  // warm golden outline
-    'b': '#fff2b0',  // soft yellow body
-    'B': '#fff8d0',  // lighter yellow (belly)
-    'e': '#ffe080',  // ear inner warm yellow
-    'w': '#fffbe8',  // soft white
-    'p': '#5a4020',  // dark brown pupil
-    'n': '#f0d898',  // subtle nose
-    'c': '#ffd88a',  // warm cheek
-    't': '#fffadc',  // tail light
-    'x': '#5a4020',  // X eye (same as pupil)
-    's': '#a0d8ef',  // pastel blue sweat drop
-    'm': '#c8a850',  // mouth (same as outline)
+    'o': '#535353', 'b': '#535353', 'B': '#535353', 'e': '#535353',
+    'w': '#535353', 'n': '#535353', 'c': '#535353', 't': '#535353',
+    'x': '#535353', 's': '#535353', 'm': '#535353',
+    'p': '#ffffff',
   };
 
-  // 10 wide x 12 tall grid sprites
+  // Side-view rabbit silhouette (12 wide x 12 tall)
   const SPRITES = {
-    //        0123456789
     run1: [
-      '..ob.ob...',  // 0  ears
-      '..oe.oe...',  // 1  ear inner
-      '..ob.ob...',  // 2  ear base
-      '.obbbbbo..',  // 3  head top
-      '.bbpbpbb..',  // 4  eyes (1px bean eyes)
-      '.bcbnbcb..',  // 5  cheeks + nose
-      '.obbbbbbo.',  // 6  chin
-      'tobBBBBbo.',  // 7  body top + tail
-      '.obBBBBbo.',  // 8  body
-      '.obbbbbo..',  // 9  body bottom
-      '..ob..ob..',  // 10 legs
-      '..ob..ob..',  // 11 feet
+      '....oo......',
+      '...ooo.oo...',
+      '...ooo.oo...',
+      '..oooooo....',
+      '..opoooo....',
+      '.ooooooo....',
+      '.oooooooooo.',
+      'ooooooooooo.',
+      '.ooooooooo..',
+      '..oo...oo...',
+      '..oo....oo..',
+      '.oo....oo...',
     ],
     run2: [
-      '..ob.ob...',
-      '..oe.oe...',
-      '..ob.ob...',
-      '.obbbbbo..',
-      '.bbpbpbb..',
-      '.bcbnbcb..',
-      '.obbbbbbo.',
-      'tobBBBBbo.',
-      '.obBBBBbo.',
-      '.obbbbbo..',
-      '...ob.ob..',
-      '..ob......',
+      '....oo......',
+      '...ooo.oo...',
+      '...ooo.oo...',
+      '..oooooo....',
+      '..opoooo....',
+      '.ooooooo....',
+      '.oooooooooo.',
+      'ooooooooooo.',
+      '.ooooooooo..',
+      '..oo....oo..',
+      '...oo..oo...',
+      '..oo..oo....',
     ],
     jump: [
-      '..ob.ob...',
-      '..oe.oe...',
-      '..ob.ob...',
-      '.obbbbbo..',
-      '.bbpbpbb..',
-      '.bcbnbcb..',
-      '.obbbbbbo.',
-      'tobBBBBbo.',
-      '.obBBBBbo.',
-      '.obbbbbo..',
-      '..oooooo..',
-      '..........',
+      '....oo......',
+      '...ooo.oo...',
+      '...ooo.oo...',
+      '..oooooo....',
+      '..opoooo....',
+      '.ooooooo....',
+      '.oooooooooo.',
+      'ooooooooooo.',
+      '.ooooooooo..',
+      '..ooo..ooo..',
+      '.oo......oo.',
+      'oo........oo',
     ],
     dead: [
-      '..ob.ob...',
-      '..oe.oe...',
-      '..ob.ob...',
-      '.obbbbbo.s',
-      '.bbpbpbbs.',
-      '.bcbnbcb..',
-      '.obbmbbo..',
-      'tobBBBBbo.',
-      '.obBBBBbo.',
-      '.obbbbbo..',
-      '..ob..ob..',
-      '..ob..ob..',
+      '....oo......',
+      '...ooo.oo...',
+      '...ooo.oo...',
+      '..oooooo....',
+      '..oxoooo....',
+      '.ooooooo....',
+      '.oooooooooo.',
+      'ooooooooooo.',
+      '.ooooooooo..',
+      '..oo...oo...',
+      '..oo....oo..',
+      '.oo....oo...',
     ],
   };
 
