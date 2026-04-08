@@ -1,0 +1,78 @@
+/* ========== SNS 피드 스타일 CSS ========== */
+/* userEL 번호는 실제 블록에 맞게 변경하세요 */
+
+.userEL21373789 {
+    position: relative;
+    padding: 12px 0;
+    --block-line-radius: 0px;
+}
+
+/* 카드형 컨테이너 */
+.userEL21373789 .container {
+    max-width: 520px !important;
+}
+
+/* 세로 배치 (이미지 위 + 글 아래) */
+.userEL21373789 .row {
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+}
+.userEL21373789 .row:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* 이미지 영역 */
+.userEL21373789 .img-column {
+    width: 100% !important;
+    padding: 0 !important;
+}
+.userEL21373789 .image-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+.userEL21373789 .image-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    max-height: 400px;
+}
+
+/* 텍스트 영역 */
+.userEL21373789 .txt-column {
+    width: 100% !important;
+    padding: 20px 24px 24px !important;
+}
+.userEL21373789 .cl_caption {
+    margin-bottom: 0 !important;
+}
+
+/* 더보기 버튼 숨기기 */
+.userEL21373789 .el_btn {
+    display: none !important;
+}
+
+/* 모바일 */
+@media only screen and (max-width: 991px) {
+    .userEL21373789 .cl_caption { margin-bottom: 0 !important; }
+}
+@media only screen and (max-width: 767px) {
+    .userEL21373789 .container {
+        max-width: 100% !important;
+        padding: 0 12px;
+    }
+    .userEL21373789 .txt-column {
+        padding: 16px 18px 20px !important;
+    }
+    .userEL21373789 .txt-column:nth-child(1) { margin: 0 !important; }
+    .userEL21373789 .txt-column:nth-child(2) { margin: 0 !important; }
+    .userEL21373789 .image-wrap img {
+        max-height: 300px;
+    }
+}
