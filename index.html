@@ -359,12 +359,16 @@
   // ── Pixel outline text helper ──
   function drawPixelText(text, x, y, font) {
     ctx.font = font;
-    ctx.fillStyle = '#7a9bb5';
+    ctx.fillStyle = '#4a7a95';
     const d = 2;
     ctx.fillText(text, x - d, y);
     ctx.fillText(text, x + d, y);
     ctx.fillText(text, x, y - d);
     ctx.fillText(text, x, y + d);
+    ctx.fillText(text, x - d, y - d);
+    ctx.fillText(text, x + d, y - d);
+    ctx.fillText(text, x - d, y + d);
+    ctx.fillText(text, x + d, y + d);
     ctx.fillStyle = '#ffffff';
     ctx.fillText(text, x, y);
   }
