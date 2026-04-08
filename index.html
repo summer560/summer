@@ -20,7 +20,7 @@
   #gameWrapper {
     position: relative;
     width: 100%;
-    max-width: 100%;
+    max-width: 800px;
   }
   canvas {
     display: block;
@@ -45,13 +45,12 @@
     color: #ffffff;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
-    text-shadow: -2px 0 #fff, 2px 0 #fff, 0 -2px #fff, 0 2px #fff, -2px -2px #fff, 2px -2px #fff, -2px 2px #fff, 2px 2px #fff;
-    color: #3a6a85;
+    text-shadow: -2px 0 #7a9bb5, 2px 0 #7a9bb5, 0 -2px #7a9bb5, 0 2px #7a9bb5;
     margin-bottom: 10px;
   }
   #startOverlay .sub2 {
-    font-size: 9px;
-    color: #5a8aa5;
+    font-size: 8px;
+    color: #8ab0c8;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
   }
@@ -60,7 +59,7 @@
 </head>
 <body>
 <div id="gameWrapper">
-  <canvas id="game" width="800" height="300"></canvas>
+  <canvas id="game" width="800" height="350"></canvas>
   <div id="startOverlay">
     <div class="sub">CLICK or TAP to START</div>
     <div class="sub2">JUMP : SPACE / TAP</div>
@@ -74,8 +73,8 @@
   const overlay = document.getElementById('startOverlay');
 
   // ── Constants ──
-  const W = 800, H = 300;
-  const GROUND_Y = 250;
+  const W = 800, H = 350;
+  const GROUND_Y = 290;
   const GRAVITY = 0.6;
   const JUMP_FORCE = -11;
   const INITIAL_SPEED = 5;
@@ -360,41 +359,30 @@
   // ── Pixel outline text helper ──
   function drawPixelText(text, x, y, font) {
     ctx.font = font;
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#7a9bb5';
     const d = 2;
     ctx.fillText(text, x - d, y);
     ctx.fillText(text, x + d, y);
     ctx.fillText(text, x, y - d);
     ctx.fillText(text, x, y + d);
-    ctx.fillText(text, x - d, y - d);
-    ctx.fillText(text, x + d, y - d);
-    ctx.fillText(text, x - d, y + d);
-    ctx.fillText(text, x + d, y + d);
-    ctx.fillStyle = '#3a6a85';
+    ctx.fillStyle = '#ffffff';
     ctx.fillText(text, x, y);
   }
 
   // ── Score Display ──
-  let fontReady = false;
-  document.fonts.ready.then(() => { fontReady = true; });
-
   function drawScore() {
+    ctx.textAlign = 'right';
     const s = String(Math.floor(score)).padStart(5, '0');
     const showScore = scoreFlash === 0 || Math.floor(scoreFlash / 3) % 2 === 0;
-    const f = fontReady ? '"Press Start 2P"' : '"Courier New"';
-    ctx.font = '14px ' + f + ', monospace';
-    ctx.textAlign = 'right';
+    const font = '12px "Press Start 2P", monospace';
     if (highScore > 0) {
-      ctx.fillStyle = '#5a9ab5';
-      ctx.fillText('HI ' + String(highScore).padStart(5, '0'), W - 140, 28);
+      drawPixelText('HI ' + String(highScore).padStart(5, '0'), W - 160, 25, font);
       if (showScore) {
-        ctx.fillStyle = '#3a7a95';
-        ctx.fillText(s, W - 15, 28);
+        drawPixelText(s, W - 20, 25, font);
       }
     } else {
       if (showScore) {
-        ctx.fillStyle = '#3a7a95';
-        ctx.fillText(s, W - 15, 28);
+        drawPixelText(s, W - 20, 25, font);
       }
     }
   }
@@ -402,8 +390,8 @@
   // ── Game Over ──
   function drawGameOver() {
     ctx.textAlign = 'center';
-    drawPixelText('GAME OVER', W/2, H/2 - 30, '28px "Press Start 2P", monospace');
-    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 20, '12px "Press Start 2P", monospace');
+    drawPixelText('GAME OVER', W/2, H/2 - 30, '20px "Press Start 2P", monospace');
+    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 10, '9px "Press Start 2P", monospace');
   }
 
   // ── Idle bounce ──
