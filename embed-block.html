@@ -1,108 +1,97 @@
-<!-- ========== HTML 블럭에 넣을 코드 ========== -->
-<div class="userEL21372026">
-    <div class="container">
-        <div class="row" data-line-radius-unit="px" data-matrix-loop="true" data-matrix-column="1" data-img-height-auto="true">
-            <div class="col-xs-12 col-sm-12 col-md-12 item">
-                <div class="img-wrap">
-                    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-                    <div id="rabbitGameWrap">
-                        <canvas id="rabbitGame" width="800" height="250"></canvas>
-                        <div id="rabbitOverlay">
-                            <div class="rg-title">DOT RABBIT RUNNER</div>
-                            <div class="rg-sub">Press Space / Tap to Start</div>
-                        </div>
-                    </div>
-                    <script>
-                    (function(){
-                      var canvas=document.getElementById('rabbitGame');
-                      var ctx=canvas.getContext('2d');
-                      var overlay=document.getElementById('rabbitOverlay');
-                      var W=800,H=250,GROUND_Y=200,GRAVITY=0.6,JUMP_FORCE=-11;
-                      var INITIAL_SPEED=5,MAX_SPEED=14,ACCEL=0.005,PIXEL=4,P=4;
-                      var state='idle',speed=INITIAL_SPEED,score=0,frameCount=0,scoreFlash=0;
-                      var highScore=parseInt(localStorage.getItem('rabbitHigh')||'0');
-                      var rabbit={x:60,y:GROUND_Y,vy:0,w:40,h:48,grounded:true,frame:0,frameTimer:0};
-
-                      var PAL={'.':null,'o':'#c8a850','b':'#fff2b0','B':'#fff8d0','e':'#ffe080','w':'#fffbe8','p':'#5a4020','n':'#f0d898','c':'#ffd88a','t':'#fffadc','x':'#5a4020','s':'#a0d8ef','m':'#c8a850'};
-                      var SPRITES={
-                        run1:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo..','.bbpbpbb..','.bcbnbcb..','.obbbbbbo.','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','..ob..ob..','..ob..ob..'],
-                        run2:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo..','.bbpbpbb..','.bcbnbcb..','.obbbbbbo.','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','...ob.ob..','..ob......'],
-                        jump:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo..','.bbpbpbb..','.bcbnbcb..','.obbbbbbo.','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','..oooooo..','..........'],
-                        dead:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo.s','.bbpbpbbs.','.bcbnbcb..','.obbmbbo..','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','..ob..ob..','..ob..ob..']
-                      };
-                      var CPAL={'.':null,'g':'#88cc88','G':'#b0e8a0','O':'#f0a060','o':'#ffb87a','h':'#ffd4a8','L':'#f5a868'};
-                      var CARROT_S=['.gGg.','g.G.g','..g..','.OOO.','.ooo.','.Lho.','.ooo.','.Lho.','..o..','..O..'];
-                      var CARROT_T=['.gGg.','g.G.g','..g..','.OOO.','.ooo.','.Lho.','.ooo.','.Lho.','.ooo.','.oho.','.ooo.','..o..','..o..','..O..'];
-
-                      function drawGrid(grid,x,y){for(var r=0;r<grid.length;r++){var row=grid[r];for(var c=0;c<row.length;c++){var ch=row[c];if(ch==='.')continue;var color=PAL[ch];if(!color)continue;ctx.fillStyle=color;ctx.fillRect(x+c*P,y+r*P,P,P);}}}
-                      function drawCarrotGrid(grid,x,y,sY){var rH=sY||P;for(var r=0;r<grid.length;r++){var row=grid[r];for(var c=0;c<row.length;c++){var ch=row[c];if(ch==='.')continue;var color=CPAL[ch];if(!color)continue;ctx.fillStyle=color;ctx.fillRect(x+c*P,y+r*rH,P,rH);}}}
-                      function drawCarrot(x,y,w,h,sp){var g=sp==='carrot_tall'?CARROT_T:CARROT_S;drawCarrotGrid(g,x,y,h/g.length);}
-
-                      var obstacles=[];
-                      var OB_TYPES=[{w:20,h:36,sprite:'carrot_small'},{w:20,h:48,sprite:'carrot_tall'},{w:44,h:36,sprite:'carrot_double'}];
-                      function spawnOb(){var t=OB_TYPES[Math.floor(Math.random()*OB_TYPES.length)];var gap=300+Math.random()*200;var lx=obstacles.length>0?obstacles[obstacles.length-1].x:W;obstacles.push({x:Math.max(W,lx+gap),y:GROUND_Y-t.h+4,w:t.w,h:t.h,sprite:t.sprite});}
-
-                      var groundOffset=0,groundDots=[];
-                      for(var i=0;i<50;i++) groundDots.push({x:Math.random()*W*2,y:GROUND_Y+8+Math.random()*20});
-                      var clouds=[];
-                      for(var i=0;i<4;i++) clouds.push({x:Math.random()*W,y:30+Math.random()*60,w:40+Math.random()*30,speed:0.3+Math.random()*0.5});
-
-                      function drawCloud(c){ctx.fillStyle='#d8d0e8';ctx.fillRect(c.x,c.y,c.w,P*2);ctx.fillRect(c.x+P*2,c.y-P,c.w-P*4,P);ctx.fillRect(c.x+P,c.y+P*2,c.w-P*2,P);}
-                      function checkCol(r,o){var pad=6;return r.x+pad<o.x+o.w-pad&&r.x+r.w-pad>o.x+pad&&r.y+r.h-pad<o.y+o.h&&r.y+r.h>o.y+pad;}
-
-                      function drawPixelText(text,x,y,font){ctx.font=font;ctx.fillStyle='#b8a0cc';var d=2;ctx.fillText(text,x-d,y);ctx.fillText(text,x+d,y);ctx.fillText(text,x,y-d);ctx.fillText(text,x,y+d);ctx.fillStyle='#ffffff';ctx.fillText(text,x,y);}
-
-                      function jump(){
-                        if(state==='idle'){state='running';overlay.style.display='none';}
-                        if(state==='dead'){rabbit.y=GROUND_Y;rabbit.vy=0;rabbit.grounded=true;obstacles.length=0;speed=INITIAL_SPEED;score=0;frameCount=0;scoreFlash=0;overlay.style.display='none';state='running';return;}
-                        if(rabbit.grounded&&state==='running'){rabbit.vy=JUMP_FORCE;rabbit.grounded=false;}
-                      }
-
-                      document.addEventListener('keydown',function(e){if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump();}});
-                      canvas.addEventListener('touchstart',function(e){e.preventDefault();jump();});
-                      canvas.addEventListener('mousedown',function(){jump();});
-                      overlay.addEventListener('click',function(){jump();});
-                      overlay.addEventListener('touchstart',function(e){e.preventDefault();jump();});
-
-                      function update(){
-                        if(state!=='running')return;
-                        frameCount++;speed=Math.min(MAX_SPEED,INITIAL_SPEED+frameCount*ACCEL);score+=speed*0.05;
-                        var prev=Math.floor(score-speed*0.05),curr=Math.floor(score);
-                        if(Math.floor(curr/100)>Math.floor(prev/100)&&curr>0)scoreFlash=30;
-                        if(scoreFlash>0)scoreFlash--;
-                        rabbit.vy+=GRAVITY;rabbit.y+=rabbit.vy;
-                        if(rabbit.y>=GROUND_Y){rabbit.y=GROUND_Y;rabbit.vy=0;rabbit.grounded=true;}
-                        rabbit.frameTimer++;if(rabbit.frameTimer>6){rabbit.frame=1-rabbit.frame;rabbit.frameTimer=0;}
-                        groundOffset=(groundOffset+speed)%W;
-                        clouds.forEach(function(c){c.x-=c.speed;if(c.x+c.w<0){c.x=W+Math.random()*100;c.y=30+Math.random()*60;}});
-                        if(obstacles.length===0||obstacles[obstacles.length-1].x<W-200){if(Math.random()<0.02||obstacles.length===0)spawnOb();}
-                        obstacles.forEach(function(o){o.x-=speed;});obstacles=obstacles.filter(function(o){return o.x+o.w>-50;});
-                        var rBox={x:rabbit.x,y:rabbit.y-rabbit.h,w:rabbit.w,h:rabbit.h};
-                        for(var i=0;i<obstacles.length;i++){if(checkCol(rBox,obstacles[i])){state='dead';if(Math.floor(score)>highScore){highScore=Math.floor(score);localStorage.setItem('rabbitHigh',String(highScore));}break;}}
-                      }
-
-                      function draw(){
-                        ctx.fillStyle='#f0ecf8';ctx.fillRect(0,0,W,H);
-                        clouds.forEach(drawCloud);
-                        ctx.fillStyle='#c0b0d8';ctx.fillRect(0,GROUND_Y+4,W,1);
-                        groundDots.forEach(function(d){var dx=((d.x-groundOffset)%(W*2)+W*2)%(W*2)-W*0.5;if(dx>-10&&dx<W+10){ctx.fillStyle='#d8d0e8';ctx.fillRect(dx,d.y,2,1);}});
-                        obstacles.forEach(function(o){if(o.sprite==='carrot_double'){drawCarrot(o.x,o.y,20,o.h,'carrot_small');drawCarrot(o.x+22,o.y,20,o.h,'carrot_small');}else{drawCarrot(o.x,o.y,o.w,o.h,o.sprite);}});
-                        var spriteY=rabbit.y-rabbit.h;var sk;
-                        if(state==='dead')sk='dead';else if(!rabbit.grounded)sk='jump';else sk=rabbit.frame===0?'run1':'run2';
-                        drawGrid(SPRITES[sk],rabbit.x,spriteY);
-                        ctx.textAlign='right';var s=String(Math.floor(score)).padStart(5,'0');var show=scoreFlash===0||Math.floor(scoreFlash/3)%2===0;
-                        var font='12px "Press Start 2P",monospace';
-                        if(highScore>0){drawPixelText('HI '+String(highScore).padStart(5,'0'),W-160,25,font);if(show)drawPixelText(s,W-20,25,font);}
-                        else{if(show)drawPixelText(s,W-20,25,font);}
-                        if(state==='dead'){ctx.textAlign='center';drawPixelText('GAME OVER',W/2,H/2-20,'16px "Press Start 2P",monospace');drawPixelText('TAP / SPACE TO RESTART',W/2,H/2+15,'8px "Press Start 2P",monospace');}
-                      }
-
-                      function loop(){update();draw();requestAnimationFrame(loop);}
-                      loop();
-                    })();
-                    </script>
-                </div>
-            </div>
-        </div>
+<!-- ========== HTML 블럭 안에 넣을 코드 (안쪽 내용만) ========== -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<div id="rabbitGameWrap">
+    <canvas id="rabbitGame" width="800" height="250"></canvas>
+    <div id="rabbitOverlay">
+        <div class="rg-title">DOT RABBIT RUNNER</div>
+        <div class="rg-sub">Press Space / Tap to Start</div>
     </div>
 </div>
+<script>
+(function(){
+  var canvas=document.getElementById('rabbitGame');
+  var ctx=canvas.getContext('2d');
+  var overlay=document.getElementById('rabbitOverlay');
+  var W=800,H=250,GROUND_Y=200,GRAVITY=0.6,JUMP_FORCE=-11;
+  var INITIAL_SPEED=5,MAX_SPEED=14,ACCEL=0.005,PIXEL=4,P=4;
+  var state='idle',speed=INITIAL_SPEED,score=0,frameCount=0,scoreFlash=0;
+  var highScore=parseInt(localStorage.getItem('rabbitHigh')||'0');
+  var rabbit={x:60,y:GROUND_Y,vy:0,w:40,h:48,grounded:true,frame:0,frameTimer:0};
+
+  var PAL={'.':null,'o':'#c8a850','b':'#fff2b0','B':'#fff8d0','e':'#ffe080','w':'#fffbe8','p':'#5a4020','n':'#f0d898','c':'#ffd88a','t':'#fffadc','x':'#5a4020','s':'#a0d8ef','m':'#c8a850'};
+  var SPRITES={
+    run1:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo..','.bbpbpbb..','.bcbnbcb..','.obbbbbbo.','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','..ob..ob..','..ob..ob..'],
+    run2:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo..','.bbpbpbb..','.bcbnbcb..','.obbbbbbo.','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','...ob.ob..','..ob......'],
+    jump:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo..','.bbpbpbb..','.bcbnbcb..','.obbbbbbo.','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','..oooooo..','..........'],
+    dead:['..ob.ob...','..oe.oe...','..ob.ob...','.obbbbbo.s','.bbpbpbbs.','.bcbnbcb..','.obbmbbo..','tobBBBBbo.','.obBBBBbo.','.obbbbbo..','..ob..ob..','..ob..ob..']
+  };
+  var CPAL={'.':null,'g':'#88cc88','G':'#b0e8a0','O':'#f0a060','o':'#ffb87a','h':'#ffd4a8','L':'#f5a868'};
+  var CARROT_S=['.gGg.','g.G.g','..g..','.OOO.','.ooo.','.Lho.','.ooo.','.Lho.','..o..','..O..'];
+  var CARROT_T=['.gGg.','g.G.g','..g..','.OOO.','.ooo.','.Lho.','.ooo.','.Lho.','.ooo.','.oho.','.ooo.','..o..','..o..','..O..'];
+
+  function drawGrid(grid,x,y){for(var r=0;r<grid.length;r++){var row=grid[r];for(var c=0;c<row.length;c++){var ch=row[c];if(ch==='.')continue;var color=PAL[ch];if(!color)continue;ctx.fillStyle=color;ctx.fillRect(x+c*P,y+r*P,P,P);}}}
+  function drawCarrotGrid(grid,x,y,sY){var rH=sY||P;for(var r=0;r<grid.length;r++){var row=grid[r];for(var c=0;c<row.length;c++){var ch=row[c];if(ch==='.')continue;var color=CPAL[ch];if(!color)continue;ctx.fillStyle=color;ctx.fillRect(x+c*P,y+r*rH,P,rH);}}}
+  function drawCarrot(x,y,w,h,sp){var g=sp==='carrot_tall'?CARROT_T:CARROT_S;drawCarrotGrid(g,x,y,h/g.length);}
+
+  var obstacles=[];
+  var OB_TYPES=[{w:20,h:36,sprite:'carrot_small'},{w:20,h:48,sprite:'carrot_tall'},{w:44,h:36,sprite:'carrot_double'}];
+  function spawnOb(){var t=OB_TYPES[Math.floor(Math.random()*OB_TYPES.length)];var gap=300+Math.random()*200;var lx=obstacles.length>0?obstacles[obstacles.length-1].x:W;obstacles.push({x:Math.max(W,lx+gap),y:GROUND_Y-t.h+4,w:t.w,h:t.h,sprite:t.sprite});}
+
+  var groundOffset=0,groundDots=[];
+  for(var i=0;i<50;i++) groundDots.push({x:Math.random()*W*2,y:GROUND_Y+8+Math.random()*20});
+  var clouds=[];
+  for(var i=0;i<4;i++) clouds.push({x:Math.random()*W,y:30+Math.random()*60,w:40+Math.random()*30,speed:0.3+Math.random()*0.5});
+
+  function drawCloud(c){ctx.fillStyle='#d8d0e8';ctx.fillRect(c.x,c.y,c.w,P*2);ctx.fillRect(c.x+P*2,c.y-P,c.w-P*4,P);ctx.fillRect(c.x+P,c.y+P*2,c.w-P*2,P);}
+  function checkCol(r,o){var pad=6;return r.x+pad<o.x+o.w-pad&&r.x+r.w-pad>o.x+pad&&r.y+r.h-pad<o.y+o.h&&r.y+r.h>o.y+pad;}
+  function drawPixelText(text,x,y,font){ctx.font=font;ctx.fillStyle='#b8a0cc';var d=2;ctx.fillText(text,x-d,y);ctx.fillText(text,x+d,y);ctx.fillText(text,x,y-d);ctx.fillText(text,x,y+d);ctx.fillStyle='#ffffff';ctx.fillText(text,x,y);}
+
+  function jump(){
+    if(state==='idle'){state='running';overlay.style.display='none';}
+    if(state==='dead'){rabbit.y=GROUND_Y;rabbit.vy=0;rabbit.grounded=true;obstacles.length=0;speed=INITIAL_SPEED;score=0;frameCount=0;scoreFlash=0;overlay.style.display='none';state='running';return;}
+    if(rabbit.grounded&&state==='running'){rabbit.vy=JUMP_FORCE;rabbit.grounded=false;}
+  }
+
+  document.addEventListener('keydown',function(e){if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump();}});
+  canvas.addEventListener('touchstart',function(e){e.preventDefault();jump();});
+  canvas.addEventListener('mousedown',function(){jump();});
+  overlay.addEventListener('click',function(){jump();});
+  overlay.addEventListener('touchstart',function(e){e.preventDefault();jump();});
+
+  function update(){
+    if(state!=='running')return;
+    frameCount++;speed=Math.min(MAX_SPEED,INITIAL_SPEED+frameCount*ACCEL);score+=speed*0.05;
+    var prev=Math.floor(score-speed*0.05),curr=Math.floor(score);
+    if(Math.floor(curr/100)>Math.floor(prev/100)&&curr>0)scoreFlash=30;
+    if(scoreFlash>0)scoreFlash--;
+    rabbit.vy+=GRAVITY;rabbit.y+=rabbit.vy;
+    if(rabbit.y>=GROUND_Y){rabbit.y=GROUND_Y;rabbit.vy=0;rabbit.grounded=true;}
+    rabbit.frameTimer++;if(rabbit.frameTimer>6){rabbit.frame=1-rabbit.frame;rabbit.frameTimer=0;}
+    groundOffset=(groundOffset+speed)%W;
+    clouds.forEach(function(c){c.x-=c.speed;if(c.x+c.w<0){c.x=W+Math.random()*100;c.y=30+Math.random()*60;}});
+    if(obstacles.length===0||obstacles[obstacles.length-1].x<W-200){if(Math.random()<0.02||obstacles.length===0)spawnOb();}
+    obstacles.forEach(function(o){o.x-=speed;});obstacles=obstacles.filter(function(o){return o.x+o.w>-50;});
+    var rBox={x:rabbit.x,y:rabbit.y-rabbit.h,w:rabbit.w,h:rabbit.h};
+    for(var i=0;i<obstacles.length;i++){if(checkCol(rBox,obstacles[i])){state='dead';if(Math.floor(score)>highScore){highScore=Math.floor(score);localStorage.setItem('rabbitHigh',String(highScore));}break;}}
+  }
+
+  function draw(){
+    ctx.fillStyle='#f0ecf8';ctx.fillRect(0,0,W,H);
+    clouds.forEach(drawCloud);
+    ctx.fillStyle='#c0b0d8';ctx.fillRect(0,GROUND_Y+4,W,1);
+    groundDots.forEach(function(d){var dx=((d.x-groundOffset)%(W*2)+W*2)%(W*2)-W*0.5;if(dx>-10&&dx<W+10){ctx.fillStyle='#d8d0e8';ctx.fillRect(dx,d.y,2,1);}});
+    obstacles.forEach(function(o){if(o.sprite==='carrot_double'){drawCarrot(o.x,o.y,20,o.h,'carrot_small');drawCarrot(o.x+22,o.y,20,o.h,'carrot_small');}else{drawCarrot(o.x,o.y,o.w,o.h,o.sprite);}});
+    var spriteY=rabbit.y-rabbit.h;var sk;
+    if(state==='dead')sk='dead';else if(!rabbit.grounded)sk='jump';else sk=rabbit.frame===0?'run1':'run2';
+    drawGrid(SPRITES[sk],rabbit.x,spriteY);
+    ctx.textAlign='right';var s=String(Math.floor(score)).padStart(5,'0');var show=scoreFlash===0||Math.floor(scoreFlash/3)%2===0;
+    var font='12px "Press Start 2P",monospace';
+    if(highScore>0){drawPixelText('HI '+String(highScore).padStart(5,'0'),W-160,25,font);if(show)drawPixelText(s,W-20,25,font);}
+    else{if(show)drawPixelText(s,W-20,25,font);}
+    if(state==='dead'){ctx.textAlign='center';drawPixelText('GAME OVER',W/2,H/2-20,'16px "Press Start 2P",monospace');drawPixelText('TAP / SPACE TO RESTART',W/2,H/2+15,'8px "Press Start 2P",monospace');}
+  }
+
+  function loop(){update();draw();requestAnimationFrame(loop);}
+  loop();
+})();
+</script>
