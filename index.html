@@ -93,7 +93,7 @@
   // ── Rabbit (grid-based pixel art) ──
   const P = PIXEL;
   const rabbit = {
-    x: 60, y: GROUND_Y, vy: 0, w: 40, h: 56,
+    x: 50, y: GROUND_Y, vy: 0, w: 56, h: 64,
     grounded: true, frame: 0, frameTimer: 0
   };
 
@@ -109,71 +109,80 @@
     'p': '#ffffff',
   };
 
-  // Side-view rabbit silhouette with tall ears (10 wide x 14 tall)
+  // Side-view rabbit silhouette (14 wide x 16 tall)
+  // Facing right: snout right, tail left, long ears
   const SPRITES = {
     run1: [
-      '..oo.oo...',  // tall ears
-      '..oo.oo...',
-      '..oo.oo...',
-      '..ooooo...',  // head
-      '..opooo...',  // eye
-      '..ooooo...',
-      '.ooooooo..',  // body round
-      '.oooooooo.',
-      'ooooooooo.',
-      '.oooooooo.',
-      '.ooooooo..',
-      '..oo..oo..',  // legs
-      '..oo...oo.',
-      '..........',
+      '.....oo.oo....',  // long ears
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oooooo...',  // head top
+      '....oooooooo..',  // head round
+      '....oooooopo..',  // eye (facing right)
+      '....oooooooo..',
+      '...oooooooo...',  // neck
+      '..oooooooooo..',  // body
+      '.ooooooooooo..',
+      'oo.oooooooooo.',  // tail + body
+      '...ooooooooo..',
+      '....ooo..ooo..',  // legs
+      '....oo....oo..',
+      '..............',
     ],
     run2: [
-      '..oo.oo...',
-      '..oo.oo...',
-      '..oo.oo...',
-      '..ooooo...',
-      '..opooo...',
-      '..ooooo...',
-      '.ooooooo..',
-      '.oooooooo.',
-      'ooooooooo.',
-      '.oooooooo.',
-      '.ooooooo..',
-      '...oo.oo..',
-      '..oo..oo..',
-      '..........',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oooooo...',
+      '....oooooooo..',
+      '....oooooopo..',
+      '....oooooooo..',
+      '...oooooooo...',
+      '..oooooooooo..',
+      '.ooooooooooo..',
+      'oo.oooooooooo.',
+      '...ooooooooo..',
+      '.....ooo.ooo..',  // legs alt
+      '....oo....oo..',
+      '...oo.........',
     ],
     jump: [
-      '..oo.oo...',
-      '..oo.oo...',
-      '..oo.oo...',
-      '..ooooo...',
-      '..opooo...',
-      '..ooooo...',
-      '.ooooooo..',
-      '.oooooooo.',
-      'ooooooooo.',
-      '.oooooooo.',
-      '.ooooooo..',
-      '.oo....oo.',
-      'oo......oo',
-      '..........',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oooooo...',
+      '....oooooooo..',
+      '....oooooopo..',
+      '....oooooooo..',
+      '...oooooooo...',
+      '..oooooooooo..',
+      '.ooooooooooo..',
+      'oo.oooooooooo.',
+      '...ooooooooo..',
+      '..ooo......ooo',  // legs spread wide
+      '.oo..........o',
+      '..............',
     ],
     dead: [
-      '..oo.oo...',
-      '..oo.oo...',
-      '..oo.oo...',
-      '..ooooo...',
-      '..oxooo...',
-      '..ooooo...',
-      '.ooooooo..',
-      '.oooooooo.',
-      'ooooooooo.',
-      '.oooooooo.',
-      '.ooooooo..',
-      '..oo..oo..',
-      '..oo...oo.',
-      '..........',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oo.oo....',
+      '.....oooooo...',
+      '....oooooooo..',
+      '....ooooooxo..',  // x eye
+      '....oooooooo..',
+      '...oooooooo...',
+      '..oooooooooo..',
+      '.ooooooooooo..',
+      'oo.oooooooooo.',
+      '...ooooooooo..',
+      '....ooo..ooo..',
+      '....oo....oo..',
+      '..............',
     ],
   };
 
