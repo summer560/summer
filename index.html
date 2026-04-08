@@ -378,15 +378,15 @@
     ctx.textAlign = 'right';
     const s = String(Math.floor(score)).padStart(5, '0');
     const showScore = scoreFlash === 0 || Math.floor(scoreFlash / 3) % 2 === 0;
-    const font = '12px "Press Start 2P", monospace';
+    const font = '16px "Press Start 2P", monospace';
     if (highScore > 0) {
-      drawPixelText('HI ' + String(highScore).padStart(5, '0'), W - 160, 25, font);
+      drawPixelText('HI ' + String(highScore).padStart(5, '0'), W - 200, 30, font);
       if (showScore) {
-        drawPixelText(s, W - 20, 25, font);
+        drawPixelText(s, W - 30, 30, font);
       }
     } else {
       if (showScore) {
-        drawPixelText(s, W - 20, 25, font);
+        drawPixelText(s, W - 30, 30, font);
       }
     }
   }
@@ -394,8 +394,8 @@
   // ── Game Over ──
   function drawGameOver() {
     ctx.textAlign = 'center';
-    drawPixelText('GAME OVER', W/2, H/2 - 30, '20px "Press Start 2P", monospace');
-    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 10, '9px "Press Start 2P", monospace');
+    drawPixelText('GAME OVER', W/2, H/2 - 30, '28px "Press Start 2P", monospace');
+    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 20, '12px "Press Start 2P", monospace');
   }
 
   // ── Idle bounce ──
