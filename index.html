@@ -36,35 +36,33 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(255,255,255,0.88);
+    background: rgba(255,255,255,0.7);
     cursor: pointer;
     z-index: 10;
   }
-  #startOverlay .title {
-    font-size: 20px;
-    font-weight: normal;
-    color: #ffffff;
-    margin-bottom: 12px;
-    letter-spacing: 3px;
-    font-family: 'Press Start 2P', monospace;
-    text-shadow: -2px 0 #535353, 2px 0 #535353, 0 -2px #535353, 0 2px #535353;
-  }
   #startOverlay .sub {
-    font-size: 10px;
+    font-size: 12px;
     color: #ffffff;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
     text-shadow: -2px 0 #535353, 2px 0 #535353, 0 -2px #535353, 0 2px #535353;
+    margin-bottom: 10px;
+  }
+  #startOverlay .sub2 {
+    font-size: 8px;
+    color: #999999;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 2px;
   }
   #startOverlay.hidden { display: none; }
 </style>
 </head>
 <body>
 <div id="gameWrapper">
-  <canvas id="game" width="800" height="250"></canvas>
+  <canvas id="game" width="800" height="350"></canvas>
   <div id="startOverlay">
-    <div class="title">DOT RABBIT RUNNER</div>
-    <div class="sub">Press Space / Tap to Start</div>
+    <div class="sub">CLICK or TAP to START</div>
+    <div class="sub2">JUMP : SPACE / TAP</div>
   </div>
 </div>
 
@@ -75,8 +73,8 @@
   const overlay = document.getElementById('startOverlay');
 
   // ── Constants ──
-  const W = 800, H = 250;
-  const GROUND_Y = 200;
+  const W = 800, H = 350;
+  const GROUND_Y = 290;
   const GRAVITY = 0.6;
   const JUMP_FORCE = -11;
   const INITIAL_SPEED = 5;
@@ -387,12 +385,19 @@
   // ── Game Over ──
   function drawGameOver() {
     ctx.textAlign = 'center';
-    drawPixelText('GAME OVER', W/2, H/2 - 20, '16px "Press Start 2P", monospace');
-    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 15, '8px "Press Start 2P", monospace');
+    drawPixelText('GAME OVER', W/2, H/2 - 30, '20px "Press Start 2P", monospace');
+    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 10, '9px "Press Start 2P", monospace');
   }
 
   // ── Main Loop ──
   function update() {
+    // Animate rabbit even in idle state
+    rabbit.frameTimer++;
+    if (rabbit.frameTimer > 6) {
+      rabbit.frame = 1 - rabbit.frame;
+      rabbit.frameTimer = 0;
+    }
+
     if (state !== 'running') return;
 
     frameCount++;
@@ -414,13 +419,6 @@
       rabbit.y = GROUND_Y;
       rabbit.vy = 0;
       rabbit.grounded = true;
-    }
-
-    // Animation
-    rabbit.frameTimer++;
-    if (rabbit.frameTimer > 6) {
-      rabbit.frame = 1 - rabbit.frame;
-      rabbit.frameTimer = 0;
     }
 
     // Ground scroll
