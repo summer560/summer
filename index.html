@@ -9,7 +9,7 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #c8e6f8;
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -375,25 +375,26 @@
   }
 
   // ── Score Display ──
+  let fontReady = false;
+  document.fonts.ready.then(() => { fontReady = true; });
+
   function drawScore() {
     const s = String(Math.floor(score)).padStart(5, '0');
     const showScore = scoreFlash === 0 || Math.floor(scoreFlash / 3) % 2 === 0;
-    // Score background bar
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.fillRect(W - 260, 8, 248, 32);
-    ctx.font = '16px "Press Start 2P", "Courier New", monospace';
+    const f = fontReady ? '"Press Start 2P"' : '"Courier New"';
+    ctx.font = '14px ' + f + ', monospace';
     ctx.textAlign = 'right';
     if (highScore > 0) {
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.fillText('HI ' + String(highScore).padStart(5, '0'), W - 155, 30);
+      ctx.fillStyle = '#5a9ab5';
+      ctx.fillText('HI ' + String(highScore).padStart(5, '0'), W - 140, 28);
       if (showScore) {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(s, W - 20, 30);
+        ctx.fillStyle = '#3a7a95';
+        ctx.fillText(s, W - 15, 28);
       }
     } else {
       if (showScore) {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(s, W - 20, 30);
+        ctx.fillStyle = '#3a7a95';
+        ctx.fillText(s, W - 15, 28);
       }
     }
   }
