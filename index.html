@@ -27,7 +27,7 @@
     width: 100%;
     height: auto;
     image-rendering: pixelated;
-    background: #ffffff;
+    background: #c8e6f8;
   }
   #startOverlay {
     position: absolute;
@@ -36,7 +36,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(255,255,255,0.7);
+    background: rgba(200,230,255,0.75);
     cursor: pointer;
     z-index: 10;
   }
@@ -45,12 +45,12 @@
     color: #ffffff;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
-    text-shadow: -2px 0 #535353, 2px 0 #535353, 0 -2px #535353, 0 2px #535353;
+    text-shadow: -2px 0 #7a9bb5, 2px 0 #7a9bb5, 0 -2px #7a9bb5, 0 2px #7a9bb5;
     margin-bottom: 10px;
   }
   #startOverlay .sub2 {
     font-size: 8px;
-    color: #999999;
+    color: #8ab0c8;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
   }
@@ -298,13 +298,10 @@
   }
 
   function drawCloud(c) {
-    ctx.strokeStyle = '#535353';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.rect(c.x, c.y, c.w, PIXEL*2);
-    ctx.rect(c.x + PIXEL*2, c.y - PIXEL, c.w - PIXEL*4, PIXEL);
-    ctx.rect(c.x + PIXEL, c.y + PIXEL*2, c.w - PIXEL*2, PIXEL);
-    ctx.stroke();
+    ctx.fillStyle = '#e8f0f8';
+    ctx.fillRect(c.x, c.y, c.w, PIXEL*2);
+    ctx.fillRect(c.x + PIXEL*2, c.y - PIXEL, c.w - PIXEL*4, PIXEL);
+    ctx.fillRect(c.x + PIXEL, c.y + PIXEL*2, c.w - PIXEL*2, PIXEL);
   }
 
   // ── Collision ──
@@ -362,7 +359,7 @@
   // ── Pixel outline text helper ──
   function drawPixelText(text, x, y, font) {
     ctx.font = font;
-    ctx.fillStyle = '#535353';
+    ctx.fillStyle = '#7a9bb5';
     const d = 2;
     ctx.fillText(text, x - d, y);
     ctx.fillText(text, x + d, y);
@@ -488,21 +485,24 @@
   }
 
   function draw() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, W, H);
+    // Sky gradient
+    ctx.fillStyle = '#c8e6f8';
+    ctx.fillRect(0, 0, W, GROUND_Y + 4);
+    // Ground area
+    ctx.fillStyle = '#e8d8c0';
+    ctx.fillRect(0, GROUND_Y + 4, W, H - GROUND_Y - 4);
+    // Ground line
+    ctx.fillStyle = '#c4a882';
+    ctx.fillRect(0, GROUND_Y + 4, W, 2);
 
     // Clouds
     clouds.forEach(drawCloud);
-
-    // Ground line
-    ctx.fillStyle = '#535353';
-    ctx.fillRect(0, GROUND_Y + 4, W, 1);
 
     // Ground dots
     groundDots.forEach(d => {
       const dx = ((d.x - groundOffset) % (W * 2) + W * 2) % (W * 2) - W * 0.5;
       if (dx > -10 && dx < W + 10) {
-        ctx.fillStyle = '#aaaaaa';
+        ctx.fillStyle = '#d4c0a0';
         ctx.fillRect(dx, d.y, 2, 1);
       }
     });
