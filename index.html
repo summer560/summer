@@ -9,7 +9,7 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #ffffff;
+    background: #c8e6f8;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,7 +20,7 @@
   #gameWrapper {
     position: relative;
     width: 100%;
-    max-width: 1170px;
+    max-width: 100%;
   }
   canvas {
     display: block;
@@ -60,7 +60,7 @@
 </head>
 <body>
 <div id="gameWrapper">
-  <canvas id="game" width="1170" height="350"></canvas>
+  <canvas id="game" width="800" height="300"></canvas>
   <div id="startOverlay">
     <div class="sub">CLICK or TAP to START</div>
     <div class="sub2">JUMP : SPACE / TAP</div>
@@ -74,8 +74,8 @@
   const overlay = document.getElementById('startOverlay');
 
   // ── Constants ──
-  const W = 1170, H = 350;
-  const GROUND_Y = 290;
+  const W = 800, H = 300;
+  const GROUND_Y = 250;
   const GRAVITY = 0.6;
   const JUMP_FORCE = -11;
   const INITIAL_SPEED = 5;
@@ -380,7 +380,7 @@
     const showScore = scoreFlash === 0 || Math.floor(scoreFlash / 3) % 2 === 0;
     // Score background bar
     ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.fillRect(W - 280, 8, 268, 32);
+    ctx.fillRect(W - 260, 8, 248, 32);
     ctx.font = '16px "Press Start 2P", "Courier New", monospace';
     ctx.textAlign = 'right';
     if (highScore > 0) {
