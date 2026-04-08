@@ -93,96 +93,87 @@
   // ── Rabbit (grid-based pixel art) ──
   const P = PIXEL;
   const rabbit = {
-    x: 50, y: GROUND_Y, vy: 0, w: 56, h: 64,
+    x: 60, y: GROUND_Y, vy: 0, w: 40, h: 48,
     grounded: true, frame: 0, frameTimer: 0
   };
 
   // Grid sprite: each row is a string, each char maps to a color
   // . = transparent, o = outline, b = body pink, e = ear inner,
   // w = white, p = pupil, n = nose, c = cheek, t = tail, m = mouth
-  // All black silhouette, p = white eye
+  // Yellow rabbit palette
   const PAL = {
     '.': null,
-    'o': '#535353', 'b': '#535353', 'B': '#535353', 'e': '#535353',
-    'w': '#535353', 'n': '#535353', 'c': '#535353', 't': '#535353',
-    'x': '#535353', 's': '#535353', 'm': '#535353',
-    'p': '#ffffff',
+    'o': '#c8a850',  // golden outline
+    'b': '#fff2b0',  // soft yellow body
+    'B': '#fff8d0',  // lighter yellow belly
+    'e': '#ffe080',  // ear inner
+    'w': '#fffbe8',
+    'p': '#5a4020',  // dark brown pupil
+    'n': '#f0d898',  // nose
+    'c': '#ffd88a',  // cheek
+    't': '#fffadc',  // tail
+    'x': '#5a4020',
+    's': '#a0d8ef',
+    'm': '#c8a850',
   };
 
-  // Side-view rabbit silhouette (14 wide x 16 tall)
-  // Facing right: snout right, tail left, long ears
+  // Front-facing cute rabbit (10 wide x 12 tall)
   const SPRITES = {
     run1: [
-      '.....oo.oo....',  // long ears
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oooooo...',  // head top
-      '....oooooooo..',  // head round
-      '....oooooopo..',  // eye (facing right)
-      '....oooooooo..',
-      '...oooooooo...',  // neck
-      '..oooooooooo..',  // body
-      '.ooooooooooo..',
-      'oo.oooooooooo.',  // tail + body
-      '...ooooooooo..',
-      '....ooo..ooo..',  // legs
-      '....oo....oo..',
-      '..............',
+      '..ob.ob...',
+      '..oe.oe...',
+      '..ob.ob...',
+      '.obbbbbo..',
+      '.bbpbpbb..',
+      '.bcbnbcb..',
+      '.obbbbbbo.',
+      'tobBBBBbo.',
+      '.obBBBBbo.',
+      '.obbbbbo..',
+      '..ob..ob..',
+      '..ob..ob..',
     ],
     run2: [
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oooooo...',
-      '....oooooooo..',
-      '....oooooopo..',
-      '....oooooooo..',
-      '...oooooooo...',
-      '..oooooooooo..',
-      '.ooooooooooo..',
-      'oo.oooooooooo.',
-      '...ooooooooo..',
-      '.....ooo.ooo..',  // legs alt
-      '....oo....oo..',
-      '...oo.........',
+      '..ob.ob...',
+      '..oe.oe...',
+      '..ob.ob...',
+      '.obbbbbo..',
+      '.bbpbpbb..',
+      '.bcbnbcb..',
+      '.obbbbbbo.',
+      'tobBBBBbo.',
+      '.obBBBBbo.',
+      '.obbbbbo..',
+      '...ob.ob..',
+      '..ob......',
     ],
     jump: [
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oooooo...',
-      '....oooooooo..',
-      '....oooooopo..',
-      '....oooooooo..',
-      '...oooooooo...',
-      '..oooooooooo..',
-      '.ooooooooooo..',
-      'oo.oooooooooo.',
-      '...ooooooooo..',
-      '..ooo......ooo',  // legs spread wide
-      '.oo..........o',
-      '..............',
+      '..ob.ob...',
+      '..oe.oe...',
+      '..ob.ob...',
+      '.obbbbbo..',
+      '.bbpbpbb..',
+      '.bcbnbcb..',
+      '.obbbbbbo.',
+      'tobBBBBbo.',
+      '.obBBBBbo.',
+      '.obbbbbo..',
+      '..oooooo..',
+      '..........',
     ],
     dead: [
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oo.oo....',
-      '.....oooooo...',
-      '....oooooooo..',
-      '....ooooooxo..',  // x eye
-      '....oooooooo..',
-      '...oooooooo...',
-      '..oooooooooo..',
-      '.ooooooooooo..',
-      'oo.oooooooooo.',
-      '...ooooooooo..',
-      '....ooo..ooo..',
-      '....oo....oo..',
-      '..............',
+      '..ob.ob...',
+      '..oe.oe...',
+      '..ob.ob...',
+      '.obbbbbo.s',
+      '.bbpbpbbs.',
+      '.bcbnbcb..',
+      '.obbmbbo..',
+      'tobBBBBbo.',
+      '.obBBBBbo.',
+      '.obbbbbo..',
+      '..ob..ob..',
+      '..ob..ob..',
     ],
   };
 
@@ -212,12 +203,12 @@
   // g = dark green, G = light green, O = dark orange, o = orange, h = highlight, T = tip
   const CARROT_PAL = {
     '.': null,
-    'g': '#535353',
-    'G': '#535353',
-    'O': '#535353',
-    'o': '#535353',
-    'h': '#737373',
-    'L': '#535353',
+    'g': '#88cc88',
+    'G': '#b0e8a0',
+    'O': '#f0a060',
+    'o': '#ffb87a',
+    'h': '#ffd4a8',
+    'L': '#f5a868',
   };
 
   const CARROT_SMALL = [
@@ -406,13 +397,33 @@
     drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 10, '9px "Press Start 2P", monospace');
   }
 
+  // ── Idle bounce ──
+  let idleTimer = 0;
+
   // ── Main Loop ──
   function update() {
-    // Animate rabbit even in idle state
+    // Animate rabbit legs always
     rabbit.frameTimer++;
     if (rabbit.frameTimer > 6) {
       rabbit.frame = 1 - rabbit.frame;
       rabbit.frameTimer = 0;
+    }
+
+    // Idle: auto bounce rabbit
+    if (state === 'idle') {
+      idleTimer++;
+      if (idleTimer % 60 === 0) {
+        rabbit.vy = JUMP_FORCE * 0.6;
+        rabbit.grounded = false;
+      }
+      rabbit.vy += GRAVITY;
+      rabbit.y += rabbit.vy;
+      if (rabbit.y >= GROUND_Y) {
+        rabbit.y = GROUND_Y;
+        rabbit.vy = 0;
+        rabbit.grounded = true;
+      }
+      return;
     }
 
     if (state !== 'running') return;
