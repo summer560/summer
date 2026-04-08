@@ -45,12 +45,13 @@
     color: #ffffff;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
-    text-shadow: -2px 0 #7a9bb5, 2px 0 #7a9bb5, 0 -2px #7a9bb5, 0 2px #7a9bb5;
+    text-shadow: -2px 0 #fff, 2px 0 #fff, 0 -2px #fff, 0 2px #fff, -2px -2px #fff, 2px -2px #fff, -2px 2px #fff, 2px 2px #fff;
+    color: #3a6a85;
     margin-bottom: 10px;
   }
   #startOverlay .sub2 {
-    font-size: 8px;
-    color: #8ab0c8;
+    font-size: 9px;
+    color: #5a8aa5;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 2px;
   }
@@ -359,7 +360,7 @@
   // ── Pixel outline text helper ──
   function drawPixelText(text, x, y, font) {
     ctx.font = font;
-    ctx.fillStyle = '#4a7a95';
+    ctx.fillStyle = '#ffffff';
     const d = 2;
     ctx.fillText(text, x - d, y);
     ctx.fillText(text, x + d, y);
@@ -369,7 +370,7 @@
     ctx.fillText(text, x + d, y - d);
     ctx.fillText(text, x - d, y + d);
     ctx.fillText(text, x + d, y + d);
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#3a6a85';
     ctx.fillText(text, x, y);
   }
 
