@@ -1,11 +1,4 @@
 /* ========== CSS 블럭에 넣을 코드 ========== */
-.userEL21372026 { position: relative; padding:20px 0px; --block-line-radius: 0px; }
-.userEL21372026 .container.full-width > .row[data-matrix-loop="true"][data-matrix-column="1"] > .item,
-.userEL21372026 .container.full-width > .row[data-matrix-loop="true"][data-matrix-column="1"][data-ipd] > .item {
-    padding-left: 0;
-    padding-right: 0;
-}
-
 #rabbitGameWrap {
     position: relative;
     width: 100%;
