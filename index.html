@@ -78,8 +78,8 @@
   const GRAVITY = 0.6;
   const JUMP_FORCE = -11;
   const INITIAL_SPEED = 5;
-  const MAX_SPEED = 13;
-  const ACCEL = 0.001;
+  const MAX_SPEED = 14;
+  const ACCEL = 0.005;
   const PIXEL = 4; // dot size for pixel art
 
   // ── Game State ──
@@ -88,6 +88,7 @@
   let score = 0;
   let highScore = parseInt(localStorage.getItem('rabbitHigh') || '0');
   let frameCount = 0;
+  let scoreFlash = 0;
 
   // ── Rabbit (grid-based pixel art) ──
   const P = PIXEL;
@@ -351,22 +352,29 @@
     speed = INITIAL_SPEED;
     score = 0;
     frameCount = 0;
+    scoreFlash = 0;
     overlay.classList.add('hidden');
   }
 
   // ── Score Display ──
   function drawScore() {
-    ctx.fillStyle = '#7a6b8a';
     ctx.font = '12px "Press Start 2P", monospace';
     ctx.textAlign = 'right';
     const s = String(Math.floor(score)).padStart(5, '0');
+    // Flash effect: blink score text
+    const showScore = scoreFlash === 0 || Math.floor(scoreFlash / 3) % 2 === 0;
     if (highScore > 0) {
       ctx.fillStyle = '#b8a8c8';
       ctx.fillText('HI ' + String(highScore).padStart(5, '0'), W - 20, 25);
-      ctx.fillStyle = '#7a6b8a';
-      ctx.fillText(s, W - 130, 25);
+      if (showScore) {
+        ctx.fillStyle = '#7a6b8a';
+        ctx.fillText(s, W - 130, 25);
+      }
     } else {
-      ctx.fillText(s, W - 20, 25);
+      if (showScore) {
+        ctx.fillStyle = '#7a6b8a';
+        ctx.fillText(s, W - 20, 25);
+      }
     }
   }
 
@@ -386,12 +394,15 @@
 
     frameCount++;
     speed = Math.min(MAX_SPEED, INITIAL_SPEED + frameCount * ACCEL);
-    score += speed * 0.02;
+    score += speed * 0.05;
 
-    // Milestone sound flash
-    if (Math.floor(score) % 100 === 0 && Math.floor(score) > 0) {
-      // flash effect handled in draw
+    // Milestone flash every 100 points
+    const prev = Math.floor((score - speed * 0.05));
+    const curr = Math.floor(score);
+    if (Math.floor(curr / 100) > Math.floor(prev / 100) && curr > 0) {
+      scoreFlash = 30;
     }
+    if (scoreFlash > 0) scoreFlash--;
 
     // Rabbit physics
     rabbit.vy += GRAVITY;
