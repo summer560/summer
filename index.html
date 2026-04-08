@@ -59,7 +59,7 @@
 </head>
 <body>
 <div id="gameWrapper">
-  <canvas id="game" width="800" height="350"></canvas>
+  <canvas id="game" width="800" height="250"></canvas>
   <div id="startOverlay">
     <div class="sub">CLICK or TAP to START</div>
     <div class="sub2">JUMP : SPACE / TAP</div>
@@ -73,8 +73,8 @@
   const overlay = document.getElementById('startOverlay');
 
   // ── Constants ──
-  const W = 800, H = 350;
-  const GROUND_Y = 290;
+  const W = 800, H = 250;
+  const GROUND_Y = 200;
   const GRAVITY = 0.6;
   const JUMP_FORCE = -11;
   const INITIAL_SPEED = 5;
@@ -390,8 +390,8 @@
   // ── Game Over ──
   function drawGameOver() {
     ctx.textAlign = 'center';
-    drawPixelText('GAME OVER', W/2, H/2 - 30, '20px "Press Start 2P", monospace');
-    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 10, '9px "Press Start 2P", monospace');
+    drawPixelText('GAME OVER', W/2, H/2 - 20, '16px "Press Start 2P", monospace');
+    drawPixelText('TAP / SPACE TO RESTART', W/2, H/2 + 10, '8px "Press Start 2P", monospace');
   }
 
   // ── Idle bounce ──
